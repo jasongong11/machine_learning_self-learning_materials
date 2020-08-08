@@ -21,14 +21,14 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
+X = [ones(m, 1) X];
 
 
+temp = sigmoid(X * Theta1');
 
+temp = [ones(m, 1) temp];
 
-
-
-
-
+[odds, p] = max(Theta2 * temp', [], 1);
 % =========================================================================
 
 
