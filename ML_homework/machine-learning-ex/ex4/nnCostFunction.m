@@ -62,24 +62,46 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+A_1 = [ones(m,1) X];
+Z_2 = A_1 * Theta1';
+A_2 = sigmoid(Z_2);
+A_2 = [ones(m,1) A_2];
+Z_3 = A_2 * Theta2';
+A_3 = sigmoid(Z_3);
 
+y_all = zeros(num_labels, m);
 
+for i=1:num_labels
+    y_all(i,:) = (y==i);
+end
 
+J = 1/m * sum(sum(- y_all' .* log(A_3) - (1 - y_all)' .* log(1 - A_3)));
 
+% regularized cost
+Theta1_regu_term = Theta1(:,2:end);
+Theta2_regu_term = Theta2(:,2:end);
+regu_term = lambda/ (2*m) * ( sum(Theta1_regu_term .^2, 'all') + sum(Theta2_regu_term .^2, 'all') );
 
+J = J + regu_term;
 
+% Part 2
 
+delta_3 = A_3' - y_all;
+delta_2 = Theta2(:,2:end)' * delta_3 .* sigmoidGradient(Z_2)';
 
+Delta_2 = delta_3 * A_2;
 
+Delta_1 = delta_2 * A_1;
 
+D_2 = Delta_2/m;
+D_1 = Delta_1/m;
 
+Theta1_grad = D_1;
+Theta2_grad = D_2;
 
-
-
-
-
-
-
+% Part 3
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m * (Theta1(:,2:end));
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m * (Theta2(:,2:end));
 % -------------------------------------------------------------
 
 % =========================================================================
